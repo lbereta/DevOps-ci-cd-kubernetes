@@ -1,0 +1,26 @@
+pipeline {
+    agent any
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/lbereta/devops-ci-cd-kubernetes.git'
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build("flask-app")
+                }
+            }
+        }
+        stage('Test Docker Image') {
+            steps {
+                script {
+                    docker.image("flask-app").inside {
+                        sh 'curl http://localhost:5000'
+                    }
+                }
+            }
+        }
+    }
+}
